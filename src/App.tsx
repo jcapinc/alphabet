@@ -46,47 +46,66 @@ function chooseNextLetter(scores: ScoreList, currentLetter: string): string{
 }
 
 function App() {
-	const [{scores,currentLetter}, setState] = React.useState({
+	const [{scores,currentLetter, showHint}, setState] = React.useState({
 		scores: defaultScores,
-		currentLetter: AtoZ[0]
+		currentLetter: AtoZ[0],
+		showHint: false
 	});
 	const success = () => {
 		scores[currentLetter].attempts++;
 		scores[currentLetter].success++;
 		setState({
 			scores: Object.assign({}, scores),
-			currentLetter: chooseNextLetter(scores, currentLetter)
+			currentLetter: chooseNextLetter(scores, currentLetter),
+			showHint
 		});
 	};
 	const failure = () => {
 		scores[currentLetter].attempts++;
 		setState({
 			scores: Object.assign({}, scores),
-			currentLetter: chooseNextLetter(scores, currentLetter)
+			currentLetter: chooseNextLetter(scores, currentLetter),
+			showHint
 		});
 	};
+
+	const setHint = (newVal:boolean) => () => setState({currentLetter,scores,showHint: newVal});
 	return <div>
-		<Focus letter={currentLetter} />
+		<Focus letter={currentLetter} showHint={showHint} />
 		<div style={{textAlign:"center"}}>
 			<button onClick={success}>Success</button>
+			{showHint? 
+				<button onClick={setHint(false)}>Hide Hint</button> : 
+				<button onClick={setHint(true)}>Show Hint</button>}
 			<button onClick={failure}>Failure</button>
 		</div>
-		<Letters letterSelect={letter => setState({scores, currentLetter: letter})} />
+		<Letters letterSelect={letter => setState({scores, currentLetter: letter, showHint})} />
 	</div>;
 }
 
-
 interface FocusProps{
 	letter: string;
+	showHint: boolean;
 }
 
-function Focus({letter}: FocusProps){
+function Focus({letter, showHint}: FocusProps){
 	const FocusContainerStyles: React.CSSProperties = {
 		fontSize: "80vh",
 		textAlign:"center",
-		lineHeight: "1"
+		lineHeight: "1",
+		display: "flex",
+		flexFlow:"row nowrap",
+		justifyContent:"center",
+		alignItems: "baseline"
 	};
-	return <div style={FocusContainerStyles}>{letter}{letter.toLowerCase()}</div>;
+	const hintStyles: React.CSSProperties = {
+		maxHeight: "50vh",
+		maxWidth: "50vw"
+	};
+	return <div style={FocusContainerStyles}>
+		{letter}{letter.toLowerCase()}
+		{showHint? <img src={"./letters/"+letter+".png"} alt={letter} style={hintStyles} /> : ""}
+	</div>;
 }
 
 interface LettersProps{
