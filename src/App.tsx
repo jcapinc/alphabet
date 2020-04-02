@@ -73,11 +73,11 @@ function App() {
 	return <div>
 		<Focus letter={currentLetter} showHint={showHint} />
 		<div style={{textAlign:"center"}}>
-			<button onClick={success}>Success</button>
+			<button onClick={success}>Pass</button>
 			{showHint? 
 				<button onClick={setHint(false)}>Hide Hint</button> : 
 				<button onClick={setHint(true)}>Show Hint</button>}
-			<button onClick={failure}>Failure</button>
+			<button onClick={failure}>Fail</button>
 		</div>
 		<Letters letterSelect={letter => setState({scores, currentLetter: letter, showHint})} />
 	</div>;
